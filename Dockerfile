@@ -27,7 +27,7 @@ COPY --from=builder /app/dist /var/www/html
 RUN a2enmod rewrite
 
 # Expose HTTP port
-EXPOSE 80
+EXPOSE 3000
 
 # Start Apache in foreground
 CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
