@@ -1,7 +1,17 @@
 services:
-  apache:
-    build: .
-    container_name: ekoloafrica_apache
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: redirector
     ports:
-      - "0:80"   # random host port → container 80
+      - "3000"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 300M
+        reservations:
+          cpus: '0.5'
+          memory: 150M
     restart: unless-stopped

@@ -1,19 +1,30 @@
-# Use Ubuntu as base
-FROM ubuntu:22.04
+# Stage 1: Install dependencies
+FROM node:20-alpine AS deps
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm install
 
-# Set environment variables to avoid interactive prompts
+# Stage 2: Build the app
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN npm run build   # Vite outputs to /app/dist
+
+# Stage 3: Serve with Apache
+FROM ubuntu:22.04 AS runner
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install Apache2
+# Install Apache
 RUN apt-get update && \
     apt-get install -y apache2 && \
-    apt-get clean
+    rm -rf /var/www/html/*
 
-# Remove default HTML
-RUN rm -rf /var/www/html/*
+# Copy built Vite app to Apache web root
+COPY --from=builder /app/dist /var/www/html
 
-# Copy our redirect index.html
-COPY index.html /var/www/html/
+# Optional: enable mod_rewrite for SPA routing
+RUN a2enmod rewrite
 
 # Expose HTTP port
 EXPOSE 80
