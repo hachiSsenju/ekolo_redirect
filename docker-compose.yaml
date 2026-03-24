@@ -3,5 +3,5 @@ services:
     build: .
     container_name: ekoloafrica_apache
     ports:
-      - "80"
+      - "0:80"   # random host port → container 80
     restart: unless-stopped
