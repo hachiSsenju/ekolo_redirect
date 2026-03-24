@@ -1,7 +1,7 @@
 services:
-  apache-redirect:
+  apache:
     build: .
-    container_name: ekoloafrica_redirect
+    container_name: ekoloafrica_apache
     ports:
       - "80"
     restart: unless-stopped
